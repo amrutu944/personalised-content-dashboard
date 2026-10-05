@@ -1,26 +1,147 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: <html class="dark"> toggled from Redux preferences. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Design tokens (CSS custom properties) ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f5f6fb;
+  --surface: #ffffff;
+  --surface-2: #eef0f7;
+  --border: #e3e6f0;
+  --text: #0e1120;
+  --muted: #5b6178;
+  --accent: #6d5dfc;
+  --accent-2: #e2489b;
+  --accent-3: #f59e0b;
+  --news: #0284c7;
+  --movie: #c026d3;
+  --social: #059669;
+  --ring: #6d5dfc;
+  --shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 8px 24px -12px rgb(16 24 40 / 0.12);
+  --shadow-lg: 0 24px 48px -20px rgb(76 61 220 / 0.35);
+}
+
+.dark {
+  --bg: #07080f;
+  --surface: #0f111c;
+  --surface-2: #171a29;
+  --border: #23273a;
+  --text: #eceef8;
+  --muted: #9298b3;
+  --accent: #8b7dff;
+  --accent-2: #ff5fb0;
+  --accent-3: #fbbf24;
+  --news: #38bdf8;
+  --movie: #e879f9;
+  --social: #34d399;
+  --ring: #a99fff;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -12px rgb(0 0 0 / 0.6);
+  --shadow-lg: 0 24px 60px -18px rgb(139 125 255 / 0.35);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --color-news: var(--news);
+  --color-movie: var(--movie);
+  --color-social: var(--social);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space), var(--font-jakarta), ui-sans-serif, system-ui;
+  --shadow-card: var(--shadow);
+  --shadow-glow: var(--shadow-lg);
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-float: float 14s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33% { transform: translate3d(4%, -6%, 0) scale(1.08); }
+    66% { transform: translate3d(-5%, 4%, 0) scale(0.95); }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 0.9; }
+    80%, 100% { transform: scale(2.4); opacity: 0; }
   }
 }
 
+/* ---------- Base ---------- */
+html {
+  background: var(--bg);
+  color: var(--text);
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Slim themed scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted) 35%, transparent) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Utilities ---------- */
+@utility text-gradient {
+  background-image: linear-gradient(110deg, var(--accent) 0%, var(--accent-2) 55%, var(--accent-3) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-gradient-brand {
+  background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 60%, var(--accent-3) 120%);
+}
+
+@utility glass {
+  background: color-mix(in oklab, var(--surface) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+@utility skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 0%,
+    color-mix(in oklab, var(--surface-2) 55%, var(--surface)) 50%,
+    var(--surface-2) 100%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
 }
