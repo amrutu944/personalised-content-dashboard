@@ -203,11 +203,12 @@ Debounced search · infinite pagination · server-side parallel fetching + cachi
   - API normalization, fallback-on-failure, and API key handling
   - every async UI state (loading, empty, error, retry, load more, live posts)
   - login validation and Settings interactions
-- **15 E2E tests** (Playwright, desktop + mobile), covering:
+- **16 E2E tests** (Playwright, desktop + mobile), covering:
   - search: verifies **one API request for 7 keystrokes**
   - mouse **and** keyboard drag-and-drop, plus favorites order persisting across reloads
   - auth redirect → sign in → reload → sign out
   - theme persistence, language switching, and topic changes
+  - the preview dialog opens centred, stays still, and closes
 - **CI:** GitHub Actions runs lint, type-check, tests with coverage, and E2E on every push.
 
 ## ☁️ Deployment (Vercel, free)

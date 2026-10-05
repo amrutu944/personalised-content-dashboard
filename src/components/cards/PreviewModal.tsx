@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import type { ContentItem } from "@/lib/types";
 import { timeAgo } from "@/lib/feed";
@@ -10,13 +11,20 @@ import { TYPE_META } from "@/lib/meta";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { FavoriteButton } from "./FavoriteButton";
 
+const subscribe = () => () => {};
+
 /**
  * Accessible detail dialog used for items without an external URL (e.g. demo
  * data and social posts). Closes on Escape / backdrop click and restores focus.
+ *
+ * Rendered through a portal into <body>: cards use transforms (hover lift,
+ * drag-and-drop), and a `position: fixed` element inside a transformed parent
+ * gets trapped in that parent instead of covering the viewport.
  */
 export function PreviewModal({ item, open, onClose }: { item: ContentItem; open: boolean; onClose: () => void }) {
   const { t } = useTranslation();
   const closeRef = useRef<HTMLButtonElement>(null);
+  const isClient = useSyncExternalStore(subscribe, () => true, () => false);
 
   useEffect(() => {
     if (!open) return;
@@ -34,7 +42,9 @@ export function PreviewModal({ item, open, onClose }: { item: ContentItem; open:
 
   const { icon: Icon, colorVar } = TYPE_META[item.type];
 
-  return (
+  if (!isClient) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -99,6 +109,7 @@ export function PreviewModal({ item, open, onClose }: { item: ContentItem; open:
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

@@ -81,6 +81,8 @@ html {
   background: var(--bg);
   color: var(--text);
   scroll-behavior: smooth;
+  /* Reserve scrollbar space so locking scroll (open dialog) doesn't shift the page */
+  scrollbar-gutter: stable;
   -webkit-tap-highlight-color: transparent;
 }
 
